@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      annyang:
+        specifier: ^2.6.1
+        version: 2.6.1
       vue:
         specifier: ^3.2.37
         version: 3.4.27
@@ -255,6 +258,9 @@ packages:
   acorn-walk@8.3.2:
     resolution: {integrity: sha512-cjkyv4OtNCIeqhHrfS81QWXoCBPExR/J62oyEqepVw8WaQeSqpW2uhuLPh1m9eWhDuOo/jUXVTlifvesOWp/4A==}
     engines: {node: '>=0.4.0'}
+
+  annyang@2.6.1:
+    resolution: {integrity: sha512-KfO6FVFmE7H7epXgAWRoGITShVqsDs6zLKuTxDiJHZmAVnpKeUAKiMUIr7hDXbNUOqRIB3RVTQQd/Yaf4ULauw==}
 
   ansi-colors@1.1.0:
     resolution: {integrity: sha512-SFKX67auSNoVR38N3L+nvsPjOE0bybKTYbkf5tRvushrAPQ9V75huw0ZxBkKVeRU9kqH3d6HA4xTckbwZ4ixmA==}
@@ -1896,6 +1902,8 @@ snapshots:
   '@webcomponents/custom-elements@1.6.0': {}
 
   acorn-walk@8.3.2: {}
+
+  annyang@2.6.1: {}
 
   ansi-colors@1.1.0:
     dependencies:

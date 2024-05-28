@@ -23,6 +23,7 @@
     "zip": "npm run build && node src/zip.js"
   },
   "dependencies": {
+    "annyang": "^2.6.1",
     "vue": "^3.2.37"
   },
   "devDependencies": {
