@@ -1,76 +1,68 @@
-function getInteractiveElements() {
-  console.log('getInteractiveElements called');
-  const elements = [];
-  document.querySelectorAll('a, button, input, textarea, select').forEach((element) => {
-    const rect = element.getBoundingClientRect();
-    if (rect.width > 0 && rect.height > 0) {
-      elements.push({
-        tagName: element.tagName,
-        type: element.type,
-        name: element.name,
-        id: element.id,
-        innerText: element.innerText,
-        placeholder: element.placeholder,
-        value: element.value,
-        xpath: getElementXPath(element)
-      });
-    }
-  });
-  console.log('Found elements:', elements);
-  return elements;
-}
+import __vite__cjsImport0_annyang from "/vendor/.vite-deps-annyang.js__v--038256e7.js"; const annyang = __vite__cjsImport0_annyang.__esModule ? __vite__cjsImport0_annyang.default : __vite__cjsImport0_annyang;
 
-function getElementXPath(element) {
-  if (element.id !== '') {
-    return `//*[@id="${element.id}"]`;
-  }
-  if (element === document.body) {
-    return '/html/body';
-  }
-  var ix = 0;
-  var siblings = element.parentNode.childNodes;
-  for (var i = 0; i < siblings.length; i++) {
-    var sibling = siblings[i];
-    if (sibling === element) {
-      return `${getElementXPath(element.parentNode)}/${element.tagName}[${ix + 1}]`;
-    }
-    if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
-      ix++;
-    }
-  }
-}
+if (!annyang) {
+  console.error('Annyang not loaded');
+} else {
+  console.log('Annyang loaded successfully');
 
-function performClick(xpath) {
-  console.log('performClick called with xpath:', xpath);
-  const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-  if (element) {
-    element.click();
-    console.log('Element clicked:', element);
-  } else {
-    console.log('Element not found for xpath:', xpath);
-  }
-}
+  const commands = {
+    'show tps report': function() {
+      console.log('Command recognized: show tps report');
+      document.querySelector('#tpsreport').style.bottom = '-100px';
+    },
+    'show me *tag': showFlickr,
+    'calculate :month stats': calculateStats,
+    'say hello (to my little) friend': greeting,
+    'speak *message': speakMessage
+  };
 
-function performInput(xpath, value) {
-  console.log('performInput called with xpath:', xpath, 'and value:', value);
-  const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-  if (element) {
-    element.value = value;
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-    console.log('Element value set:', element);
-  } else {
-    console.log('Element not found for xpath:', xpath);
+  annyang.addCommands(commands);
+  annyang.start();
+  console.log('Annyang started and listening for commands');
+
+  function showFlickr(tag) {
+    console.log('Showing Flickr images for tag:', tag);
+    const url = `http://api.flickr.com/services/rest/?tags=${tag}`;
+    fetch(url)
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error fetching Flickr data:', error));
+  }
+
+  function calculateStats(month) {
+    console.log('Calculating stats for:', month);
+    document.querySelector('#stats').textContent = `Statistics for ${month}`;
+  }
+
+  function greeting() {
+    console.log('Saying hello');
+    document.querySelector('#greeting').textContent = 'Hello!';
+  }
+
+  function speakMessage(message) {
+    console.log('Speaking message:', message);
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.onstart = () => console.log('Speech started');
+    utterance.onend = () => console.log('Speech ended');
+    utterance.onerror = (event) => console.error('Speech error', event);
+    window.speechSynthesis.speak(utterance);
   }
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log('Message received in content script:', request);
-  if (request.action === 'getInteractiveElements') {
-    const elements = getInteractiveElements();
-    sendResponse(elements);
-  } else if (request.action === 'performClick') {
-    performClick(request.xpath);
-  } else if (request.action === 'performInput') {
-    performInput(request.xpath, request.value);
+  if (request.action === 'performCommand') {
+    if (request.command === 'speak') {
+      console.log('Performing speak command with message:', request.message);
+      speakMessage(request.message);
+    } else if (request.command === 'show tps report') {
+      document.querySelector('#tpsreport').style.bottom = '-100px';
+    } else if (request.command === 'show me') {
+      showFlickr(request.tag);
+    } else if (request.command === 'calculate stats') {
+      calculateStats(request.month);
+    } else if (request.command === 'say hello friend') {
+      greeting();
+    }
   }
 });
